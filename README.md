@@ -1,2 +1,2 @@
-# Learning Reactjs 😏
-# building an expense tracker ✨
+### Learning Reactjs 😏
+### building a spotify clone with reactjs ✨
