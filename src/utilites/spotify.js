@@ -1,4 +1,4 @@
-import {myclientId} from '../secrets'
+import {myclientId} from './secrets'
 //zspotfity docs -setup 
 
 

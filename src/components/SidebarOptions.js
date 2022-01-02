@@ -1,4 +1,6 @@
 import React from 'react'
+import '../styles/SidebarOptions.css';
+
 
 function SidebarOptions({title, Icon}) {
     return (

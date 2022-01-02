@@ -1,63 +1,61 @@
-import React, { useEffect, useState } from 'react'
-import Login from './components/Login'
-import './App.css'
-import { getTokenFromUrl } from './components/spotify';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import './App.css';
+import Login from './components/Login';
 import SpotifyWebApi from "spotify-web-api-js";
-import {useDataLayerValue} from "./Datalayer";
-import Player from './Player';
+import { getTokenFromUrl } from './utilites/spotify';
+import { userActions } from './features/userSlice';
+import Player from './components/Player';
+
+
 
 function App() {
-  // const [token, setToken] = useState(null);
-  const [{user, token}, dispatch] = useDataLayerValue();
+  const dispatch = useDispatch()
+  const spotify = new SpotifyWebApi();
+  const { user, token, playlists } = useSelector((state) => state.data)
+  console.log(user, "user info")
 
-  // useffect runs code base on a given condition
   useEffect(() => {
     // code...
     const hash = getTokenFromUrl();
     window.location.hash = "";
-    
+
     const _token = hash.access_token;
 
-    if(_token){
+    if (_token) {
       // setToken(_token);
 
-      dispatch({
-        type:'SET_TOKEN',
-        token:_token,
-      })
+      dispatch(userActions.setToken(_token));
 
       spotify.setAccessToken(_token);
 
       // asynchornous  call
-      spotify.getMe().then(user =>{
+      spotify.getMe().then(user => {
+        dispatch(userActions.setUser(user));
+      });
 
-        dispatch({
-          type:'SET_USER',
-          user:user
-        });
-      }) ; 
-      
-      soptify.getUserPlaylists().then((playlists) =>{
-        dispatch({
-          type: 'SET_PLAYLISTS',
-          playlists:playlists
+      spotify.getUserPlaylists().then((playlists) => {
+        dispatch(userActions.setPlaylists(playlists));
+
       })
+
+      spotify.getPlaylist('37i9dQZEVXcNhwHJY5GeBW').then((response) => {
+        dispatch(userActions.setDisoverWeekly(response));
       })
     }
 
-  }, []); 
-  console.log('I have a token  >> 👀', token);
-  console.log('hey', user);
-  console.log('hey token', token);
+  }, []);
 
+  console.log(token)
+  console.log(user)
+  console.log(playlists)
 
 
   return (
-    <div className="app">
-      {token ? <Player spotify={spotify}/>:  <Login/> }
-     
+    <div className="App">
+      {token ? <Player /> : <Login />}
     </div>
-  )
+  );
 }
 
 export default App;
